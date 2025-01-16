@@ -42,6 +42,8 @@ char **readcolors(uint64_t size, FILE *colorfile, int linenum) {
 
 // appends the ghostty config file
 void append(FILE *config, char **colors, int linenum) {
+  char string[] = "palette"; // searches for initial palette definitions
+  
   for (int i = 0; i < linenum; i++) {
     fprintf(config, "palette = %d=%s", i, colors[i]);
   }
