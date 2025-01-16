@@ -41,37 +41,29 @@ char **readcolors(uint64_t size, FILE *colorfile, int linenum) {
 }
 
 // appends the ghostty config file
-void append(FILE *ghostfile, char **colors, int linenum) {
-  fprintf(ghostfile, 
-      "window-decoration = false\n"
-      "font-family = Iosevka Nerd Font\n"
-      "font-size = 18\n"
-      "background-opacity = 0.9\n"
-      "window-padding-x = 4\n"
-      "window-padding-y = 4\n"
-      "window-padding-balance = true\n");
+void append(FILE *config, char **colors, int linenum) {
   for (int i = 0; i < linenum; i++) {
-    fprintf(ghostfile, "palette = %d=%s", i, colors[i]);
+    fprintf(config, "palette = %d=%s", i, colors[i]);
   }
   
-  fprintf(ghostfile, "background = %s", colors[0]);
-  fprintf(ghostfile, "foreground = %s", colors[15]);
+  fprintf(config, "background = %s", colors[0]);
+  fprintf(config, "foreground = %s", colors[15]);
 }
 
 void main() {
-  char *colordir = "/home/ishan/.cache/wal/colors";
-  char *ghostdir = "/home/ishan/.config/ghostty/config";
+  char *dircolor = "/home/ishan/.cache/wal/colors";
+  char *dirconfig = "/home/ishan/.config/ghostty/config";
 
-  FILE *colorfile = fopen(colordir, "r"); 
-  FILE *ghostfile = fopen(ghostdir, "w");
+  FILE *colorfile = fopen(dircolor, "r"); 
+  FILE *config = fopen(dirconfig, "a");
 
   uint64_t size = colfilesize(colorfile); 
   int linenum = size / 8; 
 
   char **colors = readcolors(size, colorfile, linenum); 
 
-  append(ghostfile, colors, linenum);
+  append(config, colors, linenum);
 
   fclose(colorfile);
-  fclose(ghostfile);
+  fclose(config);
 }
