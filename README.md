@@ -4,7 +4,6 @@
 
 phantom is an implementation of pywal colors in ghostty. unlike pywal, instead of changing tty colors, phantom directly changes the theming on ghostty as per your currrent pywal colors.
 
-phantom most likely wont work on your computer initially and you will have to change the source code yourself in order to get it to read your pywal colors.
-even if it starts reading colors, it wont change your config files in respect to your previous configuration.
+phantom most likely wont work on your computer initially and you will have to change the directory to your pywal colors yourself in order to get it to read your pywal colors.
 
-# your previous configuration will be wiped if you run this script.
+if there are palettes defined in your ghostty config file initially, there shouldnt be any other settings after the color palettes in your config file.
