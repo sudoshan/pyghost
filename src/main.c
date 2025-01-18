@@ -67,9 +67,11 @@ char **readfile(uint64_t size, FILE *file, int numlines) {
   free(buffer);
 }
 
+// checks if palettes are already defined in the configuration file
+// returns the line no. where it is configured in
 int checker(FILE *readconf) {
   char line[100];
-  int count = 1;
+  int num = 1;
   fseek(readconf, 0, SEEK_SET);
   
   if (readconf != NULL) {
@@ -77,10 +79,10 @@ int checker(FILE *readconf) {
       if (strstr(line, "palette")) {
         break;
       }
-      count++;
+      num++;
     }
     
-    return count;
+    return num;
   }
 }
 
