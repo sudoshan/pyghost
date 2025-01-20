@@ -44,7 +44,7 @@ uint64_t numlines(FILE *file) {
 }
 
 // reads the contents of the file as per the given directory
-char **readfile(uint64_t size, FILE *file, int numlines) {
+char **readcolors(uint64_t size, FILE *file, int numlines) {
   char buffline[100];
   char **buffer = malloc(size);
 
@@ -54,6 +54,7 @@ char **readfile(uint64_t size, FILE *file, int numlines) {
     while (fgets(buffline, numlines, file)) {
       buffer[index] = malloc(100);
       strcpy(buffer[index], buffline);
+
       index++;
     }
 
@@ -67,30 +68,40 @@ char **readfile(uint64_t size, FILE *file, int numlines) {
   free(buffer);
 }
 
-// checks if palettes are already defined in the configuration file
-// returns the line no. where it is configured in
-int checker(FILE *readconf) {
-  char line[100];
-  int num = 1;
-  fseek(readconf, 0, SEEK_SET);
-  
-  if (readconf != NULL) {
-    while (fgets(line, 100, readconf)) {
-      if (strstr(line, "palette")) {
-        break;
+char **readopts(uint64_t size, FILE *file, int numlines, int *index) {
+  int count;
+  char buffline[100];
+  char **buffer = malloc(size);
+
+  if (file != NULL) {
+    while (fgets(buffline, numlines, file)) {
+      if (!strstr(buffline, "palette") && 
+          !strstr(buffline, "background") && 
+          !strstr(buffline, "foreground")) 
+      {
+        buffer[count] = malloc(100);
+        strcpy(buffer[count], buffline);
+
+        *index = count;
+        count++;
       }
-      num++;
     }
-    
-    return num;
+
+    return buffer;
   }
+
+  else {
+    printf("not able to open config file\n");
+  }
+
+  free(buffer);
 }
 
 // rewrite the ghostty config file
-void rewrite(FILE *confile, char **conf, int count, char **colors, int colorlines) {
+void rewrite(FILE *confile, char **opts, int *index, char **colors, int colorlines) {
   if (confile != NULL) {
-    for (int i = 0; i <= count + 1; i++) {
-      fprintf(confile, "%s", conf[i]);
+    for (int i = 0; i <= *index; i++) {
+      fprintf(confile, "%s", opts[i]);
     }
 
     for (int i = 0; i < colorlines; i++) {
@@ -114,20 +125,23 @@ void main() {
 
   uint64_t colorsize = filesize(colorfile); 
   uint64_t colorlines = numlines(colorfile); 
-  char **colors = readfile(colorsize, colorfile, colorlines); 
+  char **colors = readcolors(colorsize, colorfile, colorlines); 
 
-  FILE *readconf = fopen(dirconf, "r");
+  FILE *rconfile = fopen(dirconf, "r");
 
-  uint64_t confsize = filesize(readconf);
-  uint64_t conflines = numlines(readconf); 
-  char **conf = readfile(confsize, readconf, conflines);
+  int value; // to initialize index pointer
+  int *index = &value;
 
-  int count = checker(readconf);
+  uint64_t confsize = filesize(rconfile);
+  uint64_t conflines = numlines(rconfile); 
 
-  fclose(readconf);
+  // stores all previous options of the config file
+  char **opts = readopts(confsize, rconfile, conflines, index);
+
+  fclose(rconfile);
 
   FILE *confile = fopen(dirconf, "w");
-  rewrite(confile, conf, count, colors, colorlines);
+  rewrite(confile, opts, index, colors, colorlines);
 
   fclose(colorfile);
   fclose(confile);
