@@ -3,6 +3,52 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+// get directory of the color file
+char *colorfolder(const char *home) {
+  if (home == NULL) {
+    printf("error, home\n");
+  }
+
+  char *folder = "/.cache/wal/colors";
+  int size = strlen(home) + strlen(folder) + 1;
+  printf("%d\n", size);
+
+  char *dircolor = malloc(size);
+
+  if (dircolor == NULL) {
+      perror("malloc failed\n");
+      return NULL;
+  }
+
+  snprintf(dircolor, size, "%s%s", home, folder);
+  printf("%s\n", dircolor);
+
+  return dircolor;
+}
+
+// get directory of the config file
+char *confolder(const char *home) {
+  if (home == NULL) {
+    printf("error, home\n");
+  }
+
+  char *folder = "/.config/ghostty/config";
+  int size = strlen(home) + strlen(folder) + 1;
+  printf("%d\n", size);
+
+  char *dirconf = malloc(size);
+
+  if (dirconf == NULL) {
+      perror("malloc failed\n");
+      return NULL;
+  }
+
+  snprintf(dirconf, size, "%s%s", home, folder);
+  printf("%s\n", dirconf);
+
+  return dirconf;
+}
+
 // reads the size of the file given
 uint64_t filesize(FILE *file) {
   if (file != NULL) {
@@ -117,9 +163,11 @@ void rewrite(FILE *confile, char **opts, int *index, char **colors, int colorlin
 }
 
 void main() {
-  char *dircolor = "/home/ishan/.cache/wal/colors";
-  char *dirconf = "/home/ishan/.config/ghostty/config";
+  const char *home = getenv("HOME");
 
+  char *dircolor = colorfolder(home);
+  char *dirconf = confolder(home);
+  
   FILE *colorfile = fopen(dircolor, "r"); 
 
   uint64_t colorsize = filesize(colorfile); 
@@ -128,8 +176,9 @@ void main() {
 
   FILE *rconfile = fopen(dirconf, "r");
 
-  int value; // to initialize index pointer
-  int *index = &value;
+  // initialize the pointer
+  int value; 
+  int *index = &value; 
 
   uint64_t confsize = filesize(rconfile);
   uint64_t conflines = numlines(rconfile); 
