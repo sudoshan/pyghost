@@ -6,7 +6,7 @@
 // get directory of the color file
 char *colorfolder(const char *home) {
   if (home == NULL) {
-    printf("error, home\n");
+    puts("error, home");
   }
 
   const char *folder = "/.cache/wal/colors";
@@ -15,7 +15,7 @@ char *colorfolder(const char *home) {
   char *dircolor = malloc(size);
 
   if (dircolor == NULL) {
-      perror("malloc failed\n");
+      puts("malloc failed");
       return NULL;
   }
 
@@ -26,7 +26,7 @@ char *colorfolder(const char *home) {
 // get directory of the config file
 char *confolder(const char *home) {
   if (home == NULL) {
-    printf("error, home\n");
+    puts("error, home");
   }
 
   const char *folder = "/.config/ghostty/config";
@@ -35,7 +35,7 @@ char *confolder(const char *home) {
   char *dirconf = malloc(size);
 
   if (dirconf == NULL) {
-      perror("malloc failed\n");
+      puts("malloc failed");
       return NULL;
   }
 
@@ -47,19 +47,19 @@ char *confolder(const char *home) {
 uint64_t filesize(FILE *file) {
   if (file != NULL) {
     if (fseek(file, 0, SEEK_END) != 0) {
-      printf("error\n");
+      puts("error");
       return 0;
     }
     uint64_t size = ftell(file);
     if (fseek(file, 0, SEEK_SET) != 0) {
-      printf("error\n");
+      puts("error");
       return 0;
     }
     return size;
   }
 
   else {
-    printf("not able to read size of color file\n");
+    puts("not able to read size of color file");
   }
 }
 
@@ -101,7 +101,7 @@ char **readcolors(uint64_t size, FILE *file, int numlines) {
   }
 
   else {
-    printf("not able to open colors file\n");
+    puts("not able to open colors file");
   }
 
   free(buffer);
@@ -130,7 +130,7 @@ char **readopts(uint64_t size, FILE *file, int numlines, int *index) {
   }
 
   else {
-    printf("not able to open config file\n");
+    puts("not able to open config file");
   }
 
   free(buffer);
@@ -152,7 +152,7 @@ void rewrite(FILE *confile, char **opts, int *index, char **colors, int colorlin
   }
 
   else {
-    printf("not able to open ghostty config file\n");
+    puts("not able to open ghostty config file");
   }
 }
 
