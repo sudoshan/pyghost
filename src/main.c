@@ -11,7 +11,6 @@ char *colorfolder(const char *home) {
 
   char *folder = "/.cache/wal/colors";
   int size = strlen(home) + strlen(folder) + 1;
-  printf("%d\n", size);
 
   char *dircolor = malloc(size);
 
@@ -21,8 +20,6 @@ char *colorfolder(const char *home) {
   }
 
   snprintf(dircolor, size, "%s%s", home, folder);
-  printf("%s\n", dircolor);
-
   return dircolor;
 }
 
@@ -34,7 +31,6 @@ char *confolder(const char *home) {
 
   char *folder = "/.config/ghostty/config";
   int size = strlen(home) + strlen(folder) + 1;
-  printf("%d\n", size);
 
   char *dirconf = malloc(size);
 
@@ -44,8 +40,6 @@ char *confolder(const char *home) {
   }
 
   snprintf(dirconf, size, "%s%s", home, folder);
-  printf("%s\n", dirconf);
-
   return dirconf;
 }
 
