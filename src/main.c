@@ -9,7 +9,7 @@ char *colorfolder(const char *home) {
     printf("error, home\n");
   }
 
-  char *folder = "/.cache/wal/colors";
+  const char *folder = "/.cache/wal/colors";
   int size = strlen(home) + strlen(folder) + 1;
 
   char *dircolor = malloc(size);
@@ -29,7 +29,7 @@ char *confolder(const char *home) {
     printf("error, home\n");
   }
 
-  char *folder = "/.config/ghostty/config";
+  const char *folder = "/.config/ghostty/config";
   int size = strlen(home) + strlen(folder) + 1;
 
   char *dirconf = malloc(size);
