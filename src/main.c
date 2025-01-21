@@ -171,7 +171,7 @@ void main() {
   FILE *rconfile = fopen(dirconf, "r");
 
   // initialize the pointer
-  const int value; 
+  int value; 
   int *index = &value; 
 
   uint64_t confsize = filesize(rconfile);
