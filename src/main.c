@@ -125,12 +125,11 @@ char **readopts(uint64_t size, FILE *file, int numlines, int *index) {
       {
         buffer[count] = malloc(100);
 
-        // if (buffer[count] == NULL) {
-        //   printf("malloc failed\n");
-        // }
+        if (buffer[count] == NULL) {
+          printf("malloc failed\n");
+        }
 
         strcpy(buffer[count], buffline);
-        printf("%s", buffer[count]);
 
         *index = count;
         count++;
