@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdint.h>
 
 // get directory of the color file
@@ -108,18 +108,29 @@ char **readcolors(uint64_t size, FILE *file, int numlines) {
 }
 
 char **readopts(uint64_t size, FILE *file, int numlines, int *index) {
-  int count;
+  int count = 0;
+
   char buffline[100];
   char **buffer = malloc(size);
 
+  if (buffer == NULL) {
+    puts("malloc failed");
+  }
+
   if (file != NULL) {
     while (fgets(buffline, numlines, file)) {
-      if (!strstr(buffline, "palette") && 
-          !strstr(buffline, "background") && 
-          !strstr(buffline, "foreground")) 
+      if (!strstr(buffline, "palette =") && 
+          !strstr(buffline, "background =") && 
+          !strstr(buffline, "foreground =")) 
       {
         buffer[count] = malloc(100);
+
+        // if (buffer[count] == NULL) {
+        //   printf("malloc failed\n");
+        // }
+
         strcpy(buffer[count], buffline);
+        printf("%s", buffer[count]);
 
         *index = count;
         count++;
@@ -132,8 +143,6 @@ char **readopts(uint64_t size, FILE *file, int numlines, int *index) {
   else {
     puts("not able to open config file");
   }
-
-  free(buffer);
 }
 
 // rewrite the ghostty config file
@@ -166,6 +175,7 @@ void main() {
 
   uint64_t colorsize = filesize(colorfile); 
   uint64_t colorlines = numlines(colorfile); 
+
   char **colors = readcolors(colorsize, colorfile, colorlines); 
 
   FILE *rconfile = fopen(dirconf, "r");
