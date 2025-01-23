@@ -113,17 +113,18 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
 
   // temporarily stores the file line  
   char store[200];
-  char buffline[numlines][200];
+  char line[numlines][200];
 
+  char buffline[numlines][200];
   char **buffer = malloc(size);
 
-  while (fgets(buffline[count], 200, file)) {
+  while (fgets(line[count], 200, file)) {
     count++;
   }
 
   for (int i = 0; i < count; i++) {
-    char *src = buffline[i];
-    char *dst = buffline[i];
+    char *src = line[i];
+    char *dst = line[i];
 
     while (*src) {
       if (!isspace(*src)) {
@@ -133,21 +134,24 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
     }
 
     *dst = '\0';
+    printf("%s\n", line[i]);
   }
 
-  for (int i = 0; i < 10; i++) {
-    if (!strstr(buffline[i], "palette=") && 
-        !strstr(buffline[i], "background=") && 
-        !strstr(buffline[i], "foreground=")) 
+  for (int i = 0; i < count; i++) {
+    if (!strstr(line[i], "palette=") && 
+        !strstr(line[i], "background=") && 
+        !strstr(line[i], "foreground="))
     {
-      buffer[i] = malloc(200);
-      // buffer[i] = buffline[i];
-      if (buffline[i] != NULL) {
-        buffer[i] = buffline[i];
-      }
+      strcpy(buffline[i], line[i]);
       *index = i;
     }
-    printf("%s", buffer[i]);
+  }
+
+  for (int i = 0; i < count; i++) {
+    if (buffline[i] != NULL && !isspace(buffline[i])) {
+      buffer[i] = buffline[i];
+    }
+    printf("%d%s\n", i, buffer[i]);
   }
 
   return buffer;
@@ -157,7 +161,9 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
 void rewrite(FILE *confile, char **options, int *index, char **colors, int colorlines) {
   if (confile != NULL) {
     for (int i = 0; i <= *index; i++) {
-      fprintf(confile, "%s\n", options[i]);
+      if (options[i] != NULL && options[i] != "\n") {
+        fprintf(confile, "%s\n", options[i]);
+      }
     }
 
     for (int i = 0; i < colorlines; i++) {
@@ -175,7 +181,6 @@ void rewrite(FILE *confile, char **options, int *index, char **colors, int color
 
 void main() {
   const char *home = getenv("HOME");
-
   char *dircolor = colorfolder(home);
   char *dirconf = confolder(home);
   
