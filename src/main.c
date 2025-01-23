@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdint.h>
 
 // get directory of the color file
@@ -83,14 +84,14 @@ uint64_t numlines(FILE *file) {
 }
 
 // reads the contents of the file as per the given directory
-char **readcolors(uint64_t size, FILE *file, int numlines) {
+char **readcolors(uint64_t size, FILE *file) {
   char buffline[100];
   char **buffer = malloc(size);
 
   int index = 0;
 
   if (file != NULL) {
-    while (fgets(buffline, numlines, file)) {
+    while (fgets(buffline, 100, file)) {
       buffer[index] = malloc(100);
       strcpy(buffer[index], buffline);
 
@@ -107,48 +108,56 @@ char **readcolors(uint64_t size, FILE *file, int numlines) {
   free(buffer);
 }
 
-char **readopts(uint64_t size, FILE *file, int numlines, int *index) {
+char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
   int count = 0;
 
-  char buffline[100];
+  // temporarily stores the file line  
+  char store[200];
+  char buffline[numlines][200];
+
   char **buffer = malloc(size);
 
-  if (buffer == NULL) {
-    puts("malloc failed");
+  while (fgets(buffline[count], 200, file)) {
+    count++;
   }
 
-  if (file != NULL) {
-    while (fgets(buffline, numlines, file)) {
-      if (!strstr(buffline, "palette =") && 
-          !strstr(buffline, "background =") && 
-          !strstr(buffline, "foreground =")) 
-      {
-        buffer[count] = malloc(100);
+  for (int i = 0; i < count; i++) {
+    char *src = buffline[i];
+    char *dst = buffline[i];
 
-        if (buffer[count] == NULL) {
-          puts("malloc failed");
-        }
-
-        strcpy(buffer[count], buffline);
-
-        *index = count;
-        count++;
+    while (*src) {
+      if (!isspace(*src)) {
+        *dst++ = *src;
       }
+      src++;
     }
 
-    return buffer;
+    *dst = '\0';
   }
 
-  else {
-    puts("not able to open config file");
+  for (int i = 0; i < 10; i++) {
+    if (!strstr(buffline[i], "palette=") && 
+        !strstr(buffline[i], "background=") && 
+        !strstr(buffline[i], "foreground=")) 
+    {
+      buffer[i] = malloc(200);
+      // buffer[i] = buffline[i];
+      if (buffline[i] != NULL) {
+        buffer[i] = buffline[i];
+      }
+      *index = i;
+    }
+    printf("%s", buffer[i]);
   }
+
+  return buffer;
 }
 
 // rewrite the ghostty config file
-void rewrite(FILE *confile, char **opts, int *index, char **colors, int colorlines) {
+void rewrite(FILE *confile, char **options, int *index, char **colors, int colorlines) {
   if (confile != NULL) {
     for (int i = 0; i <= *index; i++) {
-      fprintf(confile, "%s", opts[i]);
+      fprintf(confile, "%s\n", options[i]);
     }
 
     for (int i = 0; i < colorlines; i++) {
@@ -175,7 +184,7 @@ void main() {
   uint64_t colorsize = filesize(colorfile); 
   uint64_t colorlines = numlines(colorfile); 
 
-  char **colors = readcolors(colorsize, colorfile, colorlines); 
+  char **colors = readcolors(colorsize, colorfile); 
 
   FILE *rconfile = fopen(dirconf, "r");
 
@@ -184,15 +193,15 @@ void main() {
   int *index = &value; 
 
   uint64_t confsize = filesize(rconfile);
-  uint64_t conflines = numlines(rconfile); 
+  uint64_t conflines = numlines(rconfile);
 
   // stores all previous options of the config file
-  char **opts = readopts(confsize, rconfile, conflines, index);
+  char **options = readoptions(rconfile, confsize, conflines, index);
 
   fclose(rconfile);
 
   FILE *confile = fopen(dirconf, "w");
-  rewrite(confile, opts, index, colors, colorlines);
+  rewrite(confile, options, index, colors, colorlines);
 
   fclose(colorfile);
   fclose(confile);
