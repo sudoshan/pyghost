@@ -134,7 +134,6 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
     }
 
     *dst = '\0';
-    printf("%s\n", line[i]);
   }
 
   for (int i = 0; i < count; i++) {
@@ -148,7 +147,9 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
   }
 
   for (int i = 0; i < count; i++) {
-    if (buffline[i] != NULL && !isspace(buffline[i])) {
+    char *ch = buffline[i];
+
+    if (buffline[i] != NULL && !isspace(*ch)) {
       buffer[i] = buffline[i];
     }
     printf("%d%s\n", i, buffer[i]);
@@ -161,9 +162,7 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
 void rewrite(FILE *confile, char **options, int *index, char **colors, int colorlines) {
   if (confile != NULL) {
     for (int i = 0; i <= *index; i++) {
-      if (options[i] != NULL && options[i] != "\n") {
-        fprintf(confile, "%s\n", options[i]);
-      }
+      fprintf(confile, "%s\n", options[i]);
     }
 
     for (int i = 0; i < colorlines; i++) {
