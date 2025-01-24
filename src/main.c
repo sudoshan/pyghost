@@ -6,12 +6,8 @@
 
 // get directory of the color file
 char *colorfolder(const char *home) {
-  if (home == NULL) {
-    puts("error, home");
-  }
-
-  const char *folder = "/.cache/wal/colors";
-  const int size = strlen(home) + strlen(folder) + 1;
+  const char *dir = "/.cache/wal/colors";
+  const int size = strlen(home) + strlen(dir) + 1;
 
   char *dircolor = malloc(size);
 
@@ -20,18 +16,14 @@ char *colorfolder(const char *home) {
       return NULL;
   }
 
-  snprintf(dircolor, size, "%s%s", home, folder);
+  snprintf(dircolor, size, "%s%s", home, dir);
   return dircolor;
 }
 
 // get directory of the config file
 char *confolder(const char *home) {
-  if (home == NULL) {
-    puts("error, home");
-  }
-
-  const char *folder = "/.config/ghostty/config";
-  const int size = strlen(home) + strlen(folder) + 1;
+  const char *dir = "/.config/ghostty/config";
+  const int size = strlen(home) + strlen(dir) + 1;
 
   char *dirconf = malloc(size);
 
@@ -40,7 +32,7 @@ char *confolder(const char *home) {
       return NULL;
   }
 
-  snprintf(dirconf, size, "%s%s", home, folder);
+  snprintf(dirconf, size, "%s%s", home, dir);
   return dirconf;
 }
 
@@ -51,6 +43,7 @@ uint64_t filesize(FILE *file) {
       puts("error");
       return 0;
     }
+
     uint64_t size = ftell(file);
     if (fseek(file, 0, SEEK_SET) != 0) {
       puts("error");
@@ -69,11 +62,8 @@ uint64_t numlines(FILE *file) {
   uint64_t lines = 0;
 
   while (!feof(file)) {
-    if (feof(file)) {
-      break;
-    }
-
     char ch = fgetc(file);
+
     if (ch == '\n') {
       lines++;
     }
@@ -106,10 +96,11 @@ char **readcolors(uint64_t size, FILE *file) {
   }
 
   free(buffer);
+  return NULL;
 }
 
 char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
-  int count = 0;
+  size_t count = 0;
 
   // temporarily stores the file line  
   char store[200];
@@ -122,7 +113,7 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
     count++;
   }
 
-  for (int i = 0; i < count; i++) {
+  for (size_t i = 0; i < count; i++) {
     char *src = line[i];
     char *dst = line[i];
 
@@ -136,7 +127,7 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
     *dst = '\0';
   }
 
-  for (int i = 0; i < count; i++) {
+  for (size_t i = 0; i < count; i++) {
     if (!strstr(line[i], "palette=") && 
         !strstr(line[i], "background=") && 
         !strstr(line[i], "foreground=")) 
@@ -146,7 +137,7 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
     }
   }
 
-  for (int i = 0; i < count; i++) {
+  for (size_t i = 0; i < count; i++) {
     if (buffline[i] != NULL) {
       buffer[i] = buffline[i];
     }
@@ -177,7 +168,7 @@ void rewrite(FILE *confile, char **options, int *index, char **colors, int color
   }
 }
 
-void main() {
+int main(void) {
   const char *home = getenv("HOME");
   char *dircolor = colorfolder(home);
   char *dirconf = confolder(home);
