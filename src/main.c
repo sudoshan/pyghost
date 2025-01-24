@@ -152,6 +152,7 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
     if (buffline[i] != NULL && !isspace(*ch)) {
       buffer[i] = buffline[i];
     }
+
     printf("%d%s\n", i, buffer[i]);
   }
 
