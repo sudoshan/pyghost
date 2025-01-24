@@ -150,8 +150,6 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
     if (buffline[i] != NULL) {
       buffer[i] = buffline[i];
     }
-
-    printf("%s", buffer[i]);
   }
 
   return buffer;
