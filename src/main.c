@@ -139,7 +139,7 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
   for (int i = 0; i < count; i++) {
     if (!strstr(line[i], "palette=") && 
         !strstr(line[i], "background=") && 
-        !strstr(line[i], "foreground="))
+        !strstr(line[i], "foreground=")) 
     {
       strcpy(buffline[i], line[i]);
       *index = i;
@@ -147,13 +147,11 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
   }
 
   for (int i = 0; i < count; i++) {
-    char *ch = buffline[i];
-
-    if (buffline[i] != NULL && !isspace(*ch)) {
+    if (buffline[i] != NULL) {
       buffer[i] = buffline[i];
     }
 
-    printf("%d%s\n", i, buffer[i]);
+    printf("%s", buffer[i]);
   }
 
   return buffer;
@@ -163,7 +161,9 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
 void rewrite(FILE *confile, char **options, int *index, char **colors, int colorlines) {
   if (confile != NULL) {
     for (int i = 0; i <= *index; i++) {
-      fprintf(confile, "%s\n", options[i]);
+      if (strlen(options[i]) > 0) {
+        fprintf(confile, "%s\n", options[i]);
+      }
     }
 
     for (int i = 0; i < colorlines; i++) {
