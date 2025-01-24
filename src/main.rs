@@ -19,11 +19,11 @@ fn read_options(conf: &str) -> Vec<&str> {
     conf.lines()
         .filter(|line| {
             line.split_once('=')
-                .and_then(|(k, _)| {
-                    Some(!matches!(
-                        k.trim(),
+                .map(|(key, _)| {
+                    !matches!(
+                        key.trim(),
                         "theme" | "palette" | "background" | "foreground",
-                    ))
+                    )
                 })
                 .unwrap_or(true)
         })
