@@ -9,3 +9,14 @@ this is what walors looks like
 
 https://github.com/user-attachments/assets/4191229a-8c02-451c-9063-04da6e17ce04
 
+# installation
+
+clone the repo:
+```sh
+git clone https://github.com/sudoshan/walors.git
+```
+
+run walors!:
+```sh
+make run
+```
