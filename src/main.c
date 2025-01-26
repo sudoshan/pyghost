@@ -75,14 +75,14 @@ uint64_t numlines(FILE *file) {
 
 // reads the contents of the file as per the given directory
 char **readcolors(uint64_t size, FILE *file) {
-  char buffline[100];
+  char buffline[1024];
   char **buffer = malloc(size);
 
   int index = 0;
 
   if (file != NULL) {
-    while (fgets(buffline, 100, file)) {
-      buffer[index] = malloc(100);
+    while (fgets(buffline, sizeof(buffline), file)) {
+      buffer[index] = malloc(sizeof(buffline));
       strcpy(buffer[index], buffline);
 
       index++;
@@ -103,13 +103,13 @@ char **readoptions(FILE *file, uint64_t size, uint64_t numlines, int *index) {
   size_t count = 0;
 
   // temporarily stores the file line  
-  char store[200];
-  char line[numlines][200];
+  char store[1024];
+  char line[numlines][1024];
 
-  char buffline[numlines][200];
+  char buffline[numlines][1024];
   char **buffer = malloc(size);
 
-  while (fgets(line[count], 200, file)) {
+  while (fgets(line[count], sizeof(line), file)) {
     count++;
   }
 
